@@ -28,10 +28,25 @@ class ApiMethods():
 
         return responses
 
+    def get_player_achievements(self, id, base_url=base_url):
+        url = base_url + "/players/%s/achievements" % id
+
+        responses = requests.get(url).json()
+
+        return responses
+
+    def get_player_snapshots(self, id, period, base_url=base_url):
+        url = base_url + "/players/%s/snapshots" % id
+
+        obj = {"period": period}
+        responses = requests.get(url, params=obj).json()
+
+        return responses
+
 
 if __name__ == "__main__":
-    api = ApiMethods(username="Pompelmo")
+    api = ApiMethods(username="Danelele")
     status, msg = api.check_player_exists()
     if status:
-        player_data = api.get_player_details(id=msg)
-        print(player_data)
+        player_data = api.get_player_snapshots(id=msg, period="day")
+        print(len(player_data))
