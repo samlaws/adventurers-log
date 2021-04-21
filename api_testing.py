@@ -1,4 +1,5 @@
 import requests
+import streamlit as st
 
 
 class ApiMethods():
@@ -35,6 +36,7 @@ class ApiMethods():
 
         return responses
 
+    @st.cache()
     def get_player_snapshots(self, id, period, base_url=base_url):
         url = base_url + "/players/%s/snapshots" % id
 
