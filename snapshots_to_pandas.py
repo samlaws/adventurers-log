@@ -1,7 +1,9 @@
 import pandas as pd
+import streamlit as st
 from api_testing import ApiMethods
 
 
+@st.cache()
 def snapshot_to_skills(snapshots):
     sd = []
     for snapshot in snapshots:
@@ -22,5 +24,8 @@ def snapshot_to_skills(snapshots):
 
     df = pd.DataFrame.from_dict(d)
     df.set_index("date", inplace=True)
+
+    df = df.reset_index().melt(id_vars=['date'])
+    df["date"] = pd.to_datetime(df["date"])
 
     return df
