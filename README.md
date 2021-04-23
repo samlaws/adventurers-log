@@ -1,4 +1,4 @@
-# Adventurers Log
+# Adventurer's Log
 
 Streamlit web app for visualizing OSRS xp gains, boss kills and more!
 
