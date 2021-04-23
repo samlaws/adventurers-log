@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from api_testing import ApiMethods
+from utils.api import ApiMethods
 
 
 @st.cache()
