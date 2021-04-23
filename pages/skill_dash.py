@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
-from vega_datasets import data
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_skills

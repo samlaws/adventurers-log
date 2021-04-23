@@ -3,20 +3,18 @@ import pandas as pd
 import numpy as np
 import altair as alt
 
-from utils.api import ApiMethods
-from utils.snapshot_wrangling import snapshot_to_skills
-from utils.config import skill_layout
 from pages.skill_dash import skill_dash
+from pages.boss_dash import boss_dash
 
 
 def main():
     # Register your pages
     pages = {
         "Skilling Dashboard": skill_dash,
-        "Bossing Dashboard": page_second,
+        "Bossing Dashboard": boss_dash,
     }
 
-    st.sidebar.title("Adventurer's Log")
+    st.sidebar.title("Adventurer's Log 📔")
 
     # Widget to select your page, you can choose between radio buttons or a selectbox
     page = st.sidebar.selectbox("Select your page", tuple(pages.keys()))
@@ -36,18 +34,9 @@ def main():
         """
         The source code for this web app is available on [github]
         (https://github.com/samlaws/adventurers-log), please feel free to 
-        comment and pull request.
+        comment or make a pull request.
         """
     )
-
-
-def page_first(username, period):
-    pass
-
-
-def page_second(username, period):
-    # ...
-    pass
 
 
 if __name__ == "__main__":
