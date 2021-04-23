@@ -5,6 +5,7 @@ import altair as alt
 
 from pages.skill_dash import skill_dash
 from pages.boss_dash import boss_dash
+from utils.config import format_sel
 
 
 def main():
@@ -23,7 +24,8 @@ def main():
     username = st.sidebar.text_input(
         "Enter a username", value='', max_chars=12).replace("-", " ")
     period = st.sidebar.selectbox('Tracking period:',
-                                  ('6h', 'day', 'week', 'month', 'year'), index=2)
+                                  ('6h', 'day', 'week', 'month', 'year'),
+                                  index=2, format_func=format_sel)
 
     # Display the selected page with the session state
 

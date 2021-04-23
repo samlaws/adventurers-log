@@ -1,3 +1,5 @@
+import string
+
 skill_layout = [[["attack", "ATT"], ["hitpoints", "HP"], ["mining", "MIN"]],
                 [["strength", "STR"], ["agility", "AGI"], ["smithing", "SMI"]],
                 [["defence", "DEF"], ["herblore", "HER"], ["fishing", "FSH"]],
@@ -7,3 +9,7 @@ skill_layout = [[["attack", "ATT"], ["hitpoints", "HP"], ["mining", "MIN"]],
                 [["runecrafting", "RC"], ["slayer", "SLY"], ["farming", "FAR"]],
                 [["construction", "CON"], ["hunter", "HUN"]]
                 ]
+
+
+def format_sel(label):
+    return string.capwords(label.replace("_", " "))

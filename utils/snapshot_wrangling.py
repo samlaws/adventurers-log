@@ -4,15 +4,19 @@ from utils.api import ApiMethods
 
 
 @st.cache()
-def snapshot_to_skills(snapshots):
+def snapshot_to_df(snapshots, type):
     sd = []
     for snapshot in snapshots:
         data = {}
         data["date"] = snapshot["createdAt"]
         for k in snapshot.keys():
             try:
-                xp = snapshot[k]["experience"]
-                data[k] = xp
+                if type == "skills":
+                    val = snapshot[k]["experience"]
+                else:
+                    val = snapshot[k]["kills"]
+
+                data[k] = val
             except Exception:
                 pass
 

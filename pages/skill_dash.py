@@ -4,7 +4,7 @@ import numpy as np
 import altair as alt
 
 from utils.api import ApiMethods
-from utils.snapshot_wrangling import snapshot_to_skills
+from utils.snapshot_wrangling import snapshot_to_df
 from utils.config import skill_layout
 
 
@@ -19,7 +19,7 @@ def skill_dash(username, period):
 
                 player_data = api.get_player_snapshots(id=msg, period=period)
 
-                skill_df = snapshot_to_skills(player_data)
+                skill_df = snapshot_to_df(player_data, type="skills")
 
                 overall = skill_df[skill_df["variable"] == "overall"]
                 skill_df = skill_df[skill_df["variable"] != "overall"]
