@@ -19,7 +19,6 @@ def boss_dash(username, period):
                 st.sidebar.write("Player found")
 
                 player_data = api.get_player_snapshots(id=msg, period=period)
-
                 boss_df = snapshot_to_df(player_data, type="boss")
 
                 boss_df = boss_df[boss_df["variable"] != "overall"]

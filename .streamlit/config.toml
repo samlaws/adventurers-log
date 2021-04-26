@@ -1,6 +1,6 @@
 [server]
 # The port where the server will listen for client and browser connections.
-port = 8888
+port = 8501
 
 [theme]
 primaryColor="#f63366"
