@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
-from datetime import datetime
+import traceback
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
@@ -31,12 +31,17 @@ def skill_dash(username, period):
                 # makes use of the streamlit columns
                 skill_array = np.array(skill_layout, dtype="object")
                 n_rows, n_cols = len(skill_array[0]), len(skill_array)
-                cols = st.beta_columns(n_cols-1)
-                for c in range(n_cols-1):
+                cols = st.beta_columns(n_cols)
+                for c in range(n_cols):
                     for r in range(n_rows):
-                        check = cols[c].checkbox(skill_array[c][r][1].lower())
-                        if check:
-                            filter_skills.append(skill_array[c][r][0])
+                        try:
+                            check = cols[c].checkbox(
+                                skill_array[c][r][1].lower())
+                            if check:
+                                print(skill_array[c][r][0])
+                                filter_skills.append(skill_array[c][r][0])
+                        except IndexError:
+                            pass
 
                 if filter_skills:
                     chart_data = skill_df[skill_df["variable"].isin(
@@ -45,33 +50,36 @@ def skill_dash(username, period):
                     chart_data = overall
 
                 graph_placeholder = st.empty()
-
-                start_date = chart_data["date"].min().to_pydatetime()
-                end_date = chart_data["date"].max().to_pydatetime()
-
-                x = st.slider("label", start_date, end_date,
-                              (start_date, end_date))
-
-                new_start = pd.Timestamp(x[0])
-                new_end = pd.Timestamp(x[1])
-                mask = (chart_data['date'] > new_start) & (
-                    chart_data['date'] <= new_end)
-                chart_data = chart_data.loc[mask]
-
-                # Create a selection that chooses the nearest point & selects based on x-value
-                nearest = alt.selection(type='single', nearest=True, on='mouseover',
-                                        fields=['date'], empty='none')
+                slider = True
 
                 # The basic line
                 # define y-axis label format depending on time period selection
                 if period in ["day", "6h"]:
                     time_format = "%H:%M"
+                    slider = False
                 elif period == "week":
                     time_format = "%d-%m"
                 elif period == "month":
                     time_format = "%d-%m"
                 else:
                     time_format = "%b %Y"
+
+                if slider:
+                    start_date = chart_data["date"].min().to_pydatetime()
+                    end_date = chart_data["date"].max().to_pydatetime()
+
+                    x = st.slider("label", start_date, end_date,
+                                  (start_date, end_date))
+
+                    new_start = pd.Timestamp(x[0])
+                    new_end = pd.Timestamp(x[1])
+                    mask = (chart_data['date'] > new_start) & (
+                        chart_data['date'] <= new_end)
+                    chart_data = chart_data.loc[mask]
+
+                # Create a selection that chooses the nearest point & selects based on x-value
+                nearest = alt.selection(type='single', nearest=True, on='mouseover',
+                                        fields=['date'], empty='none')
 
                 line = alt.Chart(chart_data).mark_line(interpolate="linear").encode(
                     x=alt.X('date:T', axis=alt.Axis(
@@ -115,5 +123,7 @@ def skill_dash(username, period):
 
         except IndexError:
             st.write("No information from that time period")
+            traceback.print_exc()
+
     else:
         st.write("Enter a username in the side bar to get started...")
