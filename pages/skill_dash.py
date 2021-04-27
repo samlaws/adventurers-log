@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
+from datetime import datetime
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
@@ -42,6 +43,20 @@ def skill_dash(username, period):
                         filter_skills)]
                 else:
                     chart_data = overall
+
+                graph_placeholder = st.empty()
+
+                start_date = chart_data["date"].min().to_pydatetime()
+                end_date = chart_data["date"].max().to_pydatetime()
+
+                x = st.slider("label", start_date, end_date,
+                              (start_date, end_date))
+
+                new_start = pd.Timestamp(x[0])
+                new_end = pd.Timestamp(x[1])
+                mask = (chart_data['date'] > new_start) & (
+                    chart_data['date'] <= new_end)
+                chart_data = chart_data.loc[mask]
 
                 # Create a selection that chooses the nearest point & selects based on x-value
                 nearest = alt.selection(type='single', nearest=True, on='mouseover',
@@ -89,7 +104,7 @@ def skill_dash(username, period):
                     nearest
                 )
                 # Put the five layers into a chart and bind the data
-                st.altair_chart(alt.layer(
+                graph_placeholder.altair_chart(alt.layer(
                     line, selectors, points, rules, text
                 ), use_container_width=True)
 
