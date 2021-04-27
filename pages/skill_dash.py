@@ -68,7 +68,7 @@ def skill_dash(username, period):
                     start_date = chart_data["date"].min().to_pydatetime()
                     end_date = chart_data["date"].max().to_pydatetime()
 
-                    x = st.slider("label", start_date, end_date,
+                    x = st.slider("Date range", start_date, end_date,
                                   (start_date, end_date))
 
                     new_start = pd.Timestamp(x[0])
