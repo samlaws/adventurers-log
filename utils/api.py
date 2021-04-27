@@ -45,6 +45,15 @@ class ApiMethods():
 
         return responses
 
+    @st.cache()
+    def get_player_deltas(self, id, period, base_url=base_url):
+        url = base_url + "/players/%s/gained" % id
+
+        obj = {"period": period}
+        responses = requests.get(url, params=obj).json()
+
+        return responses
+
 
 if __name__ == "__main__":
     api = ApiMethods(username="Danelele")

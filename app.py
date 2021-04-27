@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import altair as alt
 
+from pages.log import log
 from pages.skill_dash import skill_dash
 from pages.boss_dash import boss_dash
 from utils.config import format_sel
@@ -11,6 +12,7 @@ from utils.config import format_sel
 def main():
     # Register your pages
     pages = {
+        "Log": log,
         "Skilling Dashboard": skill_dash,
         "Bossing Dashboard": boss_dash,
     }
@@ -23,13 +25,16 @@ def main():
 
     username = st.sidebar.text_input(
         "Enter a username", value='', max_chars=12).replace("-", " ")
-    period = st.sidebar.selectbox('Tracking period:',
-                                  ('6h', 'day', 'week', 'month', 'year'),
-                                  index=2, format_func=format_sel)
 
-    # Display the selected page with the session state
+    if page in ["Skilling Dashboard",  "Bossing Dashboard"]:
+        period = st.sidebar.selectbox('Tracking period:',
+                                      ('6h', 'day', 'week', 'month', 'year'),
+                                      index=2, format_func=format_sel)
 
-    pages[page](username, period)
+        # Display the selected page with the session state
+        pages[page](username, period)
+    else:
+        pages[page](username)
 
     st.sidebar.title("About")
     st.sidebar.info(
