@@ -12,6 +12,11 @@ streamlit run .../streamlit_testing.py
 
 ![Alt Text](https://i.imgur.com/EgOCzZM.gif)
 
+
+## Todo
+
+List top skills trained when only either overall is shown or multiple skills selected.
+
 ## Roadmap
 
 Add more pages to the app to cover bosses and clue scrolls.
