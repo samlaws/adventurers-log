@@ -49,26 +49,38 @@ def log(username):
 
             level_table = pd.read_csv("data/level_table.csv")
 
-            player_data = api.get_player_snapshots(id=msg, period="year")
+            player_data = api.get_player_snapshots(id=msg, period="month")
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
 
-            st.dataframe(skill_df)
-
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, level_table).tail(30)
+                boss_df, skill_df, level_table).head(15)
 
-            messages = []
+            # st.dataframe(timeline_data)
+
+            short_m = []
             for index, row in timeline_data.iterrows():
                 if row["var_type"] == "boss":
-                    messages.append("%s %s kills" % (
+                    short_m.append("%s %s" % (
                         int(row["diffs"]), format_sel(row["variable"])))
                 else:
-                    messages.append("%s levels gained in %s" % (
+                    short_m.append("%s levels gained in %s" % (
                         int(row["l_diffs"]), format_sel(row["variable"])))
 
-            timeline_data["message"] = messages
+            long_m = []
+            for index, row in timeline_data.iterrows():
+                if row["var_type"] == "boss":
+                    long_m.append("I killed %s %s. (%s)" % (
+                        int(row["diffs"]), format_sel(row["variable"]), row["date"].strftime('%d %B %Y')))
+                else:
+                    if int(row["l_diffs"]) > 1:
+                        long_m.append("I gained a level in %s, I am now level %s (%s)" % (
+                            format_sel(row["variable"]), int(row["level"]), row["date"].strftime('%d %B %Y')))
+                    else:
+                        long_m.append("I gained %s levels in %s, I am now level %s  (%s)" % (
+                            int(row["l_diffs"]), format_sel(row["variable"]), int(row["level"]), row["date"].strftime('%d %B %Y')))
 
-            if st.button("Generate timeline plot"):
-                st.pyplot(timeline_plot(timeline_data))
+            for tup in zip(short_m, long_m):
+                with st.beta_expander(tup[0]):
+                    st.write(tup[1])

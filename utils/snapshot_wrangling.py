@@ -80,5 +80,24 @@ def timeline_data_merge(boss_df, skill_df, level_table):
     skill_df = skill_df[skill_df["l_diffs"] != 0]
     skill_df["var_type"] = "skill"
 
-    return pd.concat([skill_df, boss_df]
-                     ).sort_values(by=["date"])
+    combined = pd.concat([skill_df, boss_df]
+                         ).sort_values(by=["date"], ascending=False)
+
+    combined["day"] = combined["date"].dt.day
+    print(combined.head(20))
+
+    # https://stackoverflow.com/questions/12589481
+    # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
+    df_test = combined.groupby([(combined.variable != combined.variable.shift(
+    )).cumsum(), (combined.day != combined.day.shift(
+    )).cumsum()]).agg({'date': 'first',
+                      'var_type': 'first',
+                       'variable': 'first',
+                       'value': 'first',
+                       'diffs': 'sum',
+                       'level': 'first',
+                       'l_diffs': 'sum'
+                       }).reset_index(drop=True)
+
+    print(df_test.head(20))
+    return df_test
