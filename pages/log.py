@@ -16,7 +16,7 @@ def timeline_plot(timeline_data):
                      int(np.ceil(len(timeline_data["date"])/6)))[:len(timeline_data["date"])]
 
     # Create figure and plot a stem plot with the date
-    fig, ax = plt.subplots(figsize=(6, 12))
+    fig, ax = plt.subplots(figsize=(6, 20))
 
     # The vertical stems.
     ax.hlines(timeline_data["date"], 0, levels, color="tab:red")
@@ -35,6 +35,7 @@ def timeline_plot(timeline_data):
     ax.spines[["right", "top", "bottom"]].set_visible(False)
 
     ax.margins(y=0.1)
+    plt.axis("off")
     return fig
 
 
@@ -48,7 +49,7 @@ def log(username):
 
             level_table = pd.read_csv("data/level_table.csv")
 
-            player_data = api.get_player_snapshots(id=msg, period="week")
+            player_data = api.get_player_snapshots(id=msg, period="year")
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
@@ -56,7 +57,7 @@ def log(username):
             st.dataframe(skill_df)
 
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, level_table).tail(10)
+                boss_df, skill_df, level_table).tail(30)
 
             messages = []
             for index, row in timeline_data.iterrows():
@@ -68,3 +69,6 @@ def log(username):
                         int(row["l_diffs"]), format_sel(row["variable"])))
 
             timeline_data["message"] = messages
+
+            if st.button("Generate timeline plot"):
+                st.pyplot(timeline_plot(timeline_data))

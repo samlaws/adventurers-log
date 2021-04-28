@@ -4,7 +4,7 @@ import streamlit as st
 from utils.api import ApiMethods
 
 
-def snapshot_to_df(snapshots, type, subtype):
+def snapshot_to_df(snapshots, type, subtype="skill/xp"):
     sd = []
     for snapshot in snapshots:
         data = {}
