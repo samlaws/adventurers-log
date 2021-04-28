@@ -2,9 +2,40 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import traceback
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 from utils.api import ApiMethods
-from utils.snapshot_wrangling import snapshot_to_df
+from utils.config import format_sel
+from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
+
+
+def timeline_plot(timeline_data):
+    # Choose some nice levels
+    levels = np.tile([-3, 3, -2, 2, -1, 1],
+                     int(np.ceil(len(timeline_data["date"])/6)))[:len(timeline_data["date"])]
+
+    # Create figure and plot a stem plot with the date
+    fig, ax = plt.subplots(figsize=(6, 12))
+
+    # The vertical stems.
+    ax.hlines(timeline_data["date"], 0, levels, color="tab:red")
+    ax.plot(np.zeros_like(timeline_data["date"]), timeline_data["date"], "-o",
+            color="k", markerfacecolor="w")  # Baseline and markers on it.
+
+    # annotate lines
+    for d, l, r in zip(timeline_data["date"], levels, timeline_data["message"]):
+        ax.annotate(r, xy=(l, d),
+                    xytext=(np.sign(l)*3, -3), textcoords="offset points",
+                    horizontalalignment="right",
+                    verticalalignment="bottom" if l > 0 else "top")
+
+    # remove y axis and spines
+    ax.xaxis.set_visible(False)
+    ax.spines[["right", "top", "bottom"]].set_visible(False)
+
+    ax.margins(y=0.1)
+    return fig
 
 
 def log(username):
@@ -17,45 +48,23 @@ def log(username):
 
             level_table = pd.read_csv("data/level_table.csv")
 
-            player_data = api.get_player_snapshots(id=msg, period="month")
+            player_data = api.get_player_snapshots(id=msg, period="week")
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
 
-            skill_df = skill_df[skill_df["variable"] != "overall"]
-
-            # boss killing sessions over period
-            boss_df.sort_values(
-                by=["variable", "date"], ascending=True, inplace=True)
-            boss_df['diffs'] = boss_df['value'].diff()
-            mask = boss_df.variable != boss_df.variable.shift(1)
-            boss_df['diffs'][mask] = np.nan
-            boss_df.dropna(inplace=True)
-            boss_df["diffs"] = boss_df["diffs"].abs()
-            boss_df = boss_df[boss_df["diffs"] != 0]
-
-            st.dataframe(boss_df)
-
-            # xp gaining sessions over period
-            skill_df.sort_values(
-                by=["variable", "date"], ascending=True, inplace=True)
-            skill_df['diffs'] = skill_df['value'].diff()
-            mask = skill_df.variable != skill_df.variable.shift(1)
-            skill_df['diffs'][mask] = np.nan
-            skill_df.dropna(inplace=True)
-            skill_df["diffs"] = skill_df["diffs"].abs()
-
-            bins = level_table["exp"].to_list()
-
-            skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
-            skill_df["level"] = skill_df["level"] + 1
-
-            skill_df['l_diffs'] = skill_df['level'].diff()
-            mask = skill_df.variable != skill_df.variable.shift(1)
-            skill_df['l_diffs'][mask] = np.nan
-            skill_df.dropna(inplace=True)
-            skill_df["l_diffs"] = skill_df["l_diffs"].abs()
-
-            skill_df = skill_df[skill_df["l_diffs"] != 0]
-
             st.dataframe(skill_df)
+
+            timeline_data = timeline_data_merge(
+                boss_df, skill_df, level_table).tail(10)
+
+            messages = []
+            for index, row in timeline_data.iterrows():
+                if row["var_type"] == "boss":
+                    messages.append("%s %s kills" % (
+                        int(row["diffs"]), format_sel(row["variable"])))
+                else:
+                    messages.append("%s levels gained in %s" % (
+                        int(row["l_diffs"]), format_sel(row["variable"])))
+
+            timeline_data["message"] = messages
