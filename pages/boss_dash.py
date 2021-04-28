@@ -6,7 +6,7 @@ import string
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
-from utils.config import skill_layout, format_sel
+from utils.config import format_sel
 
 
 def boss_dash(username, period):
@@ -19,16 +19,16 @@ def boss_dash(username, period):
                 st.sidebar.write("Player found")
 
                 player_data = api.get_player_snapshots(id=msg, period=period)
-                boss_df = snapshot_to_df(player_data, type="boss")
 
-                boss_df = boss_df[boss_df["variable"] != "overall"]
+                cols = st.beta_columns((4, 1))
+                subtype = cols[1].radio(" ", ["Rank", "Kills"])
+                scale_dict = {"Rank": True, "Kills": False}
+
+                boss_df = snapshot_to_df(
+                    player_data, type="boss", subtype=subtype)
                 boss_list = list(boss_df["variable"].unique())
-                boss_list.insert(0, "")
 
-                boss_dict = {k: string.capwords(k.replace("_", " "))
-                             for k in boss_list}
-
-                filter_boss = st.multiselect(
+                filter_boss = cols[0].multiselect(
                     'Enter the bosses to track/compare',
                     options=boss_list, format_func=format_sel)
 
@@ -59,7 +59,7 @@ def boss_dash(username, period):
                         x=alt.X('date:T', axis=alt.Axis(
                             title="Time", titleFontWeight="normal", format=time_format)),
                         y=alt.Y('value:Q', scale=alt.Scale(
-                            zero=False), axis=alt.Axis(title="Kills", titleFontWeight="normal")),
+                            zero=False, reverse=scale_dict[subtype]), axis=alt.Axis(title=subtype, titleFontWeight="normal")),
                         color='variable:N'
                     )
                     # Transparent selectors across the chart. This is what tells us
@@ -90,6 +90,8 @@ def boss_dash(username, period):
                     st.altair_chart(alt.layer(
                         line, selectors, points, rules, text
                     ), use_container_width=True)
+                else:
+                    st.write("Select some bosses to filter by...")
 
             else:
                 st.sidebar.write("Player not found")

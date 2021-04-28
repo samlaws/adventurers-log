@@ -53,11 +53,3 @@ class ApiMethods():
         responses = requests.get(url, params=obj).json()
 
         return responses
-
-
-if __name__ == "__main__":
-    api = ApiMethods(username="Danelele")
-    status, msg = api.check_player_exists()
-    if status:
-        player_data = api.get_player_snapshots(id=msg, period="day")
-        print(len(player_data))

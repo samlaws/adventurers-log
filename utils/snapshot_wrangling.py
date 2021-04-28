@@ -4,8 +4,7 @@ import streamlit as st
 from utils.api import ApiMethods
 
 
-@st.cache()
-def snapshot_to_df(snapshots, type):
+def snapshot_to_df(snapshots, type, subtype):
     sd = []
     for snapshot in snapshots:
         data = {}
@@ -18,7 +17,10 @@ def snapshot_to_df(snapshots, type):
                 else:
                     val = snapshot[k]["kills"]
 
+                rank = snapshot[k]["rank"]
+
                 data[k] = val
+                data[k+"_rank"] = rank
             except Exception:
                 pass
 
@@ -35,7 +37,10 @@ def snapshot_to_df(snapshots, type):
     # UTC to gmt?
     df["date"] = pd.to_datetime(df["date"]) + pd.DateOffset(hours=1)
 
-    return df
+    if subtype == "Rank":
+        return df[df["variable"].str.contains("_rank")]
+    else:
+        return df[~df["variable"].str.contains("_rank")]
 
 
 def timeline_data_merge(boss_df, skill_df, level_table):
