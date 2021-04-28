@@ -28,26 +28,9 @@ def boss_dash(username, period):
                 boss_dict = {k: string.capwords(k.replace("_", " "))
                              for k in boss_list}
 
-                filter_boss = []
-
-                boss1 = st.empty()
-                boss2 = st.empty()
-                boss3 = st.empty()
-
-                choice1 = boss1.selectbox(
-                    "Choose a boss", boss_list, format_func=format_sel)
-                choice2 = None
-
-                filter_boss.append(choice1)
-
-                if choice1:
-                    choice2 = boss2.selectbox(
-                        "Add another?", boss_list, format_func=format_sel)
-                    filter_boss.append(choice2)
-                if choice2:
-                    choice3 = boss3.selectbox(
-                        "One more?", boss_list, format_func=format_sel)
-                    filter_boss.append(choice3)
+                filter_boss = st.multiselect(
+                    'Enter the bosses to track/compare',
+                    options=boss_list, format_func=format_sel)
 
                 chart_data = boss_df[boss_df["variable"].isin(
                     filter_boss)]
