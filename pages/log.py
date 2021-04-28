@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import altair as alt
-import string
+import traceback
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
-from utils.config import skill_layout, format_sel
 
 
 def log(username):
@@ -14,38 +12,50 @@ def log(username):
     if username:
         api = ApiMethods(username=username)
         status, msg = api.check_player_exists()
-        try:
-            if status:
-                st.sidebar.write("Player found")
+        if status:
+            st.sidebar.write("Player found")
 
-                player_data = api.get_player_snapshots(id=msg, period="week")
-                boss_df = snapshot_to_df(player_data, type="boss").drop_duplicates(
-                    subset=["variable", "value"]).replace(-1, 0)
-                skill_df = snapshot_to_df(player_data, type="skills").drop_duplicates(
-                    subset=["variable", "value"]).replace(-1, 0)
+            level_table = pd.read_csv("data/level_table.csv")
 
-                skill_df = skill_df[skill_df["variable"] != "overall"]
+            player_data = api.get_player_snapshots(id=msg, period="month")
+            boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
+            skill_df = snapshot_to_df(
+                player_data, type="skills").replace(-1, 0)
 
-                boss_df.sort_values(
-                    by=["variable", "date"], ascending=False, inplace=True)
-                boss_df['diffs'] = boss_df['value'].diff()
-                mask = boss_df.variable != boss_df.variable.shift(1)
-                boss_df['diffs'][mask] = np.nan
-                boss_df.dropna(inplace=True)
-                boss_df["diffs"] = boss_df["diffs"].abs()
+            skill_df = skill_df[skill_df["variable"] != "overall"]
 
-                st.dataframe(boss_df)
+            # boss killing sessions over period
+            boss_df.sort_values(
+                by=["variable", "date"], ascending=True, inplace=True)
+            boss_df['diffs'] = boss_df['value'].diff()
+            mask = boss_df.variable != boss_df.variable.shift(1)
+            boss_df['diffs'][mask] = np.nan
+            boss_df.dropna(inplace=True)
+            boss_df["diffs"] = boss_df["diffs"].abs()
+            boss_df = boss_df[boss_df["diffs"] != 0]
 
-                skill_df.sort_values(
-                    by=["variable", "date"], ascending=False, inplace=True)
-                skill_df['diffs'] = skill_df['value'].diff()
-                mask = skill_df.variable != skill_df.variable.shift(1)
-                skill_df['diffs'][mask] = np.nan
-                skill_df.dropna(inplace=True)
-                skill_df["diffs"] = skill_df["diffs"].abs()
+            st.dataframe(boss_df)
 
-                st.dataframe(skill_df)
-                # xp gaining sessions over period
+            # xp gaining sessions over period
+            skill_df.sort_values(
+                by=["variable", "date"], ascending=True, inplace=True)
+            skill_df['diffs'] = skill_df['value'].diff()
+            mask = skill_df.variable != skill_df.variable.shift(1)
+            skill_df['diffs'][mask] = np.nan
+            skill_df.dropna(inplace=True)
+            skill_df["diffs"] = skill_df["diffs"].abs()
 
-        except Exception as e:
-            print(e)
+            bins = level_table["exp"].to_list()
+
+            skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
+            skill_df["level"] = skill_df["level"] + 1
+
+            skill_df['l_diffs'] = skill_df['level'].diff()
+            mask = skill_df.variable != skill_df.variable.shift(1)
+            skill_df['l_diffs'][mask] = np.nan
+            skill_df.dropna(inplace=True)
+            skill_df["l_diffs"] = skill_df["l_diffs"].abs()
+
+            skill_df = skill_df[skill_df["l_diffs"] != 0]
+
+            st.dataframe(skill_df)

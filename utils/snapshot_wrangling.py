@@ -30,6 +30,7 @@ def snapshot_to_df(snapshots, type):
     df.set_index("date", inplace=True)
 
     df = df.reset_index().melt(id_vars=['date'])
-    df["date"] = pd.to_datetime(df["date"])
+    # UTC to gmt?
+    df["date"] = pd.to_datetime(df["date"]) + pd.DateOffset(hours=1)
 
     return df
