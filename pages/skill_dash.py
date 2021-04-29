@@ -16,12 +16,13 @@ def skill_dash(username, period):
         status, msg = api.check_player_exists()
         try:
             if status:
-                st.sidebar.write("Player found")
+                t = "<div><span class='green'>Player Found</span></div>"
+                st.sidebar.markdown(t, unsafe_allow_html=True)
 
                 player_data = api.get_player_snapshots(id=msg, period=period)
 
                 cols = st.beta_columns((4, 1))
-                subtype = cols[1].radio(" ", ["Rank", "XP"])
+                subtype = cols[1].radio(" ", ["XP", "Skills"])
                 scale_dict = {"Rank": True, "XP": False}
 
                 skill_df = snapshot_to_df(
@@ -108,9 +109,10 @@ def skill_dash(username, period):
                     st.write("Select some skills to view the graph...")
 
             else:
-                st.sidebar.write("Player not found")
-                st.sidebar.write(
-                    "Either they do not exist, or are not 1337 enough to be tracked on Wiseoldman.net")
+                t = "<div><span class='red'>Player not found</span></div>"
+                st.sidebar.markdown(t, unsafe_allow_html=True)
+                t = "<div><span class='red'>Either they do not exist, or are not 1337 enough to be tracked on Wiseoldman.net</span></div>"
+                st.sidebar.markdown(t, unsafe_allow_html=True)
 
         except IndexError:
             st.write("No information from that time period")
