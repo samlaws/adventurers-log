@@ -1,0 +1,17 @@
+{
+    "boss": {
+        "kraken": [
+            "I killed XXX Kraken, at least it was afk. I have now killed YYY Kraken.",
+            "I killed XXX squishy Kraken bois, I have now killed YYY Kraken."
+        ],
+        "hespori": [
+            "I harvested XXX Hespori, a rare carnivorous plant originating from Morytania. I have now harvested YYY Hespori.",
+            "I harvested XXX Hespori, I have harvested Hespori YYY times."
+        ]
+    },
+    "skill": {
+        "prayer": [
+            "I proved my devotion to Saradomin and advanced XXX levels in Prayer, I am now level YYY."
+        ]
+    }
+}

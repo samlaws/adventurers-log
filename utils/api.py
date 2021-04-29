@@ -36,7 +36,7 @@ class ApiMethods():
 
         return responses
 
-    @st.cache()
+    # @st.cache()
     def get_player_snapshots(self, id, period, base_url=base_url):
         url = base_url + "/players/%s/snapshots" % id
 
@@ -45,7 +45,7 @@ class ApiMethods():
 
         return responses
 
-    @st.cache()
+    # @st.cache()
     def get_player_deltas(self, id, period, base_url=base_url):
         url = base_url + "/players/%s/gained" % id
 

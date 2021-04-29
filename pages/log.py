@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import traceback
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+import random
+import json
 
 from utils.api import ApiMethods
 from utils.config import format_sel
@@ -47,6 +48,8 @@ def log(username):
         if status:
             st.sidebar.write("Player found")
 
+            with open('data/messages.json') as json_file:
+                messages = json.load(json_file)
             level_table = pd.read_csv("data/level_table.csv")
 
             player_data = api.get_player_snapshots(id=msg, period="month")
@@ -57,30 +60,41 @@ def log(username):
             timeline_data = timeline_data_merge(
                 boss_df, skill_df, level_table).head(15)
 
-            # st.dataframe(timeline_data)
-
-            short_m = []
             for index, row in timeline_data.iterrows():
-                if row["var_type"] == "boss":
-                    short_m.append("%s %s" % (
-                        int(row["diffs"]), format_sel(row["variable"])))
-                else:
-                    short_m.append("%s levels gained in %s" % (
-                        int(row["l_diffs"]), format_sel(row["variable"])))
 
-            long_m = []
-            for index, row in timeline_data.iterrows():
-                if row["var_type"] == "boss":
-                    long_m.append("I killed %s %s. (%s)" % (
-                        int(row["diffs"]), format_sel(row["variable"]), row["date"].strftime('%d %B %Y')))
+                var_type = row["var_type"]
+                var = row["variable"]
+                date = row["date"].strftime('%d %B %Y')
+                if var_type == "boss":
+                    diffs = int(row["diffs"])
+                    val = int(row["value"])
+                    short_m = "%s %s" % (
+                        int(diffs), format_sel(var))
                 else:
-                    if int(row["l_diffs"]) > 1:
-                        long_m.append("I gained a level in %s, I am now level %s (%s)" % (
-                            format_sel(row["variable"]), int(row["level"]), row["date"].strftime('%d %B %Y')))
+                    diffs = int(row["l_diffs"])
+                    val = int(row["level"])
+                    short_m = "%s levels gained in %s" % (
+                        int(diffs), format_sel(var))
+                try:
+                    long_m = random.choice(messages[var_type][var])
+                    long_m = long_m.replace("XXX", str(
+                        diffs)).replace("YYY", str(val))
+                except KeyError:
+                    # No message for skill or boss, reverting to default
+                    if var_type == "boss":
+                        long_m = "I killed %s %s. (%s)" % (
+                            diffs, format_sel(var), date)
                     else:
-                        long_m.append("I gained %s levels in %s, I am now level %s  (%s)" % (
-                            int(row["l_diffs"]), format_sel(row["variable"]), int(row["level"]), row["date"].strftime('%d %B %Y')))
+                        if diffs > 1:
+                            long_m = "I gained a level in %s, I am now level %s (%s)" % (
+                                format_sel(var), val, date)
+                        else:
+                            long_m = "I gained %s levels in %s, I am now level %s  (%s)" % (
+                                diffs, format_sel(var), val, date)
 
-            for tup in zip(short_m, long_m):
-                with st.beta_expander(tup[0]):
-                    st.write(tup[1])
+                with st.beta_expander(short_m):
+                    st.write(long_m)
+                    if (var_type == "skill") & (val == 99):
+                        st.balloons()
+
+            print(messages)
