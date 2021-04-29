@@ -43,7 +43,7 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
         return df[~df["variable"].str.contains("_rank")]
 
 
-def timeline_data_merge(boss_df, skill_df, level_table):
+def timeline_data_merge(boss_df, skill_df, level_table, virtual):
     skill_df = skill_df[skill_df["variable"] != "overall"]
 
     # boss killing sessions over period
@@ -67,9 +67,11 @@ def timeline_data_merge(boss_df, skill_df, level_table):
     skill_df["diffs"] = skill_df["diffs"].abs()
 
     bins = level_table["exp"].to_list()
-
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
     skill_df["level"] = skill_df["level"] + 1
+    if not virtual:
+        skill_df["level"] = np.clip(
+            skill_df['level'], a_max=99, a_min=None)
 
     skill_df['l_diffs'] = skill_df['level'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
@@ -84,7 +86,6 @@ def timeline_data_merge(boss_df, skill_df, level_table):
                          ).sort_values(by=["date"], ascending=False)
 
     combined["day"] = combined["date"].dt.day
-    print(combined.head(20))
 
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
@@ -99,5 +100,4 @@ def timeline_data_merge(boss_df, skill_df, level_table):
                        'l_diffs': 'sum'
                        }).reset_index(drop=True)
 
-    print(df_test.head(20))
     return df_test

@@ -12,15 +12,16 @@ from utils.config import format_sel
 def main():
     # Register your pages
     pages = {
-        "Log": log,
+        "Adventurer's Log": log,
         "Skilling Dashboard": skill_dash,
         "Bossing Dashboard": boss_dash,
     }
 
     st.sidebar.title("Adventurer's Log 📔")
 
+    virtual = st.sidebar.checkbox("Enable virtual levels")
     # Widget to select your page, you can choose between radio buttons or a selectbox
-    page = st.sidebar.selectbox("Select your page", tuple(pages.keys()))
+    page = st.sidebar.radio("Select your page", tuple(pages.keys()))
     #page = st.sidebar.radio("Select your page", tuple(pages.keys()))
 
     username = st.sidebar.text_input(
@@ -34,7 +35,7 @@ def main():
         # Display the selected page with the session state
         pages[page](username, period)
     else:
-        pages[page](username)
+        pages[page](username, virtual)
 
     st.sidebar.title("About")
     st.sidebar.info(

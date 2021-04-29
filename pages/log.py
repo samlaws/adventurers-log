@@ -40,7 +40,7 @@ def timeline_plot(timeline_data):
     return fig
 
 
-def log(username):
+def log(username, virtual):
 
     if username:
         api = ApiMethods(username=username)
@@ -48,6 +48,8 @@ def log(username):
         if status:
             st.sidebar.write("Player found")
 
+            # load in supporting data - messages.json with custom messages
+            # for the log and the level up table
             with open('data/messages.json') as json_file:
                 messages = json.load(json_file)
             level_table = pd.read_csv("data/level_table.csv")
@@ -57,8 +59,66 @@ def log(username):
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
 
+            skill_l = skill_df[skill_df["date"]
+                               == skill_df["date"].max()]
+
+            skill_r_df = snapshot_to_df(
+                player_data, type="skills", subtype="Rank").replace(-1, 0)
+
+            skill_rl = skill_r_df[skill_r_df["date"]
+                                  == skill_r_df["date"].max()]
+
+            skill_l["rank"] = skill_rl["value"].to_list()
+
+            bins = level_table["exp"].to_list()
+            skill_l["level"] = pd.cut(
+                skill_l.value, bins, labels=False)
+            skill_l["level"] = skill_l["level"] + 1
+
+            if not virtual:
+                skill_l["level"] = np.clip(
+                    skill_l['level'], a_max=99, a_min=None)
+
+            skill_l.iloc[0, 4] = 0
+            skill_l.iloc[0, 4] = skill_l["level"].sum()
+
+            st.title(username)
+
+            # summary_data
+            total_level = skill_l[skill_l["variable"]
+                                  == "overall"]["level"].values[0]
+            total_xp = skill_l[skill_l["variable"]
+                               == "overall"]["value"].values[0]
+            overall_rank = skill_l[skill_l["variable"]
+                                   == "overall"]["rank"].values[0]
+
+            cols_head = st.beta_columns(3)
+            cols_head[0].markdown(
+                f"### Total Level:\n {int(total_level):,}")
+            cols_head[1].markdown(f"### Total XP:\n {int(total_xp):,}")
+            cols_head[2].markdown(f"### Overall Rank:\n {int(overall_rank):,}")
+
+            st.markdown("## Skills")
+            cols_skills = st.beta_columns(6)
+            left, right = 0, 1
+            for index, row in skill_l.iterrows():
+                if index != 0:
+                    if left == 6:
+                        left, right = 0, 1
+                    print(left)
+                    skill, level = format_sel(
+                        row["variable"]) + ":", str(int(row["level"]))
+                    cols_skills[left].write(skill)
+                    cols_skills[right].write(level)
+                    left += 2
+                    right += 2
+
+            cols = st.beta_columns(2)
+
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, level_table).head(15)
+                boss_df, skill_df, level_table, virtual).head(15)
+
+            cols[0].markdown("## Recent Events")
 
             for index, row in timeline_data.iterrows():
 
@@ -92,9 +152,7 @@ def log(username):
                             long_m = "I gained %s levels in %s, I am now level %s  (%s)" % (
                                 diffs, format_sel(var), val, date)
 
-                with st.beta_expander(short_m):
+                with cols[0].beta_expander(short_m):
                     st.write(long_m)
                     if (var_type == "skill") & (val == 99):
                         st.balloons()
-
-            print(messages)
