@@ -45,7 +45,7 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
         return df[~df["variable"].str.contains("_rank")]
 
 
-def timeline_data_merge(boss_df, skill_df, level_table, virtual):
+def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df = skill_df[skill_df["variable"] != "overall"]
 
     # boss killing sessions over period
@@ -84,9 +84,21 @@ def timeline_data_merge(boss_df, skill_df, level_table, virtual):
     skill_df = skill_df[skill_df["l_diffs"] != 0]
     skill_df["var_type"] = "skill"
 
-    # TODO: Also include clue scroll data in the activities df, combined
+    clue_df = clue_df[clue_df["variable"].isin(['clue_scrolls_beginner', 'clue_scrolls_easy',
+                                                'clue_scrolls_medium', 'clue_scrolls_hard', 'clue_scrolls_elite',
+                                                'clue_scrolls_master'])]
+    clue_df.sort_values(
+        by=["variable", "date"], ascending=True, inplace=True)
+    clue_df['diffs'] = clue_df['value'].diff()
+    mask = clue_df.variable != clue_df.variable.shift(1)
+    clue_df['diffs'][mask] = np.nan
+    clue_df.dropna(inplace=True)
+    clue_df["diffs"] = clue_df["diffs"].abs()
+    clue_df = clue_df[clue_df["diffs"] != 0]
+    clue_df["var_type"] = "clue"
+    print(clue_df)
 
-    combined = pd.concat([skill_df, boss_df]
+    combined = pd.concat([skill_df, boss_df, clue_df]
                          ).sort_values(by=["date"], ascending=False)
 
     combined["day"] = combined["date"].dt.day
