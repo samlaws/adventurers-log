@@ -150,7 +150,7 @@ def log(username, virtual):
                     long_m = long_m.replace("XXX", str(
                         diffs)).replace("YYY", str(val))
                 except KeyError:
-                    # No message for skill or boss, reverting to default
+                    # No message for skill or boss or clue, reverting to default
                     if var_type == "boss":
                         long_m = "I killed %s %s. (%s)" % (
                             diffs, format_sel(var), date)
