@@ -7,6 +7,9 @@
         "hespori": [
             "I harvested XXX Hespori, a rare carnivorous plant originating from Morytania. I have now harvested YYY Hespori.",
             "I harvested XXX Hespori, I have harvested Hespori YYY times."
+        ],
+        "wintertodt": [
+            "I subdued the Wintertodt XXX times, I have now subdued the Wintertodt YYY times in total."
         ]
     },
     "skill": {

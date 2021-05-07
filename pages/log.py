@@ -224,5 +224,5 @@ def log(username, virtual):
         else:
             t = "<div><span class='red'>Player not found</span></div>"
             st.sidebar.markdown(t, unsafe_allow_html=True)
-            t = "<div><span class='red'>Either they do not exist, or are not 1337 enough to be tracked on Wiseoldman.net</span></div>"
+            t = "<div><span class='red'>Either player doesn't exist, or are not tracked on Wiseoldman.net</span></div>"
             st.sidebar.markdown(t, unsafe_allow_html=True)
