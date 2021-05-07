@@ -57,6 +57,8 @@ def log(username, virtual):
 
             # load the player data from wiseoldman
             player_data = api.get_player_snapshots(id=msg, period="month")
+            if len(player_data) < 50:
+                player_data = api.get_player_snapshots(id=msg, period="year")
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)

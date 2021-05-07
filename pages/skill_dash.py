@@ -22,7 +22,7 @@ def skill_dash(username, period):
                 player_data = api.get_player_snapshots(id=msg, period=period)
 
                 cols = st.beta_columns((4, 1))
-                subtype = cols[1].radio(" ", ["XP", "Skills"])
+                subtype = cols[1].radio(" ", ["XP", "Rank"])
                 scale_dict = {"Rank": True, "XP": False}
 
                 skill_df = snapshot_to_df(
