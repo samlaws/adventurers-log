@@ -14,6 +14,8 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
             try:
                 if type == "skills":
                     val = snapshot[k]["experience"]
+                elif type == "clues":
+                    val = snapshot[k]["score"]
                 else:
                     val = snapshot[k]["kills"]
 

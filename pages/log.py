@@ -60,6 +60,9 @@ def log(username, virtual):
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
+            clues_df = snapshot_to_df(
+                player_data, type="clues").replace(-1, 0)
+
             skill_r_df = snapshot_to_df(
                 player_data, type="skills", subtype="Rank").replace(-1, 0)
 
@@ -67,6 +70,8 @@ def log(username, virtual):
                                == skill_df["date"].max()]
             boss_l = boss_df[boss_df["date"]
                              == boss_df["date"].max()]
+            clues_l = clues_df[clues_df["date"]
+                               == clues_df["date"].max()]
             skill_rl = skill_r_df[skill_r_df["date"]
                                   == skill_r_df["date"].max()]
 
@@ -99,6 +104,28 @@ def log(username, virtual):
             cols_head[1].markdown(f"### Total XP:\n {int(total_xp):,}")
             cols_head[2].markdown(f"### Overall Rank:\n {int(overall_rank):,}")
 
+            with st.beta_expander("Clues"):
+                cols_clues = st.beta_columns((2, 1, 2, 1))
+                left, right = 0, 1
+                for index, row in clues_l.iterrows():
+                    # ignore overall
+                    if (index != 1):
+                        if left == 4:  # once the last column has been reached, reset
+                            left, right = 0, 1
+                        if ("clue" in row["variable"]) and ("all" not in row["variable"]):
+                            clue_level = "%s:" % (format_sel(row["variable"]))
+                            clue_level = clue_level.split(" ")[2]
+                            count = str(int(row["value"]))
+                            if row["variable"] in timeline_data["variable"].to_list():
+                                clue_level = "<span class='green'>%s</span>" % clue_level
+                                count = "<span class='green'>%s</span>" % count
+                            cols_clues[left].markdown(
+                                clue_level, unsafe_allow_html=True)
+                            cols_clues[right].markdown(
+                                count, unsafe_allow_html=True)
+                            left += 2
+                            right += 2
+
             with st.beta_expander("Skills"):
                 cols_skills = st.beta_columns((2, 1, 2, 1, 2, 1, 2, 1))
                 left, right = 0, 1
@@ -127,8 +154,6 @@ def log(username, virtual):
                             left, right = 0, 1
                         boss = "%s:" % (format_sel(row["variable"]))
                         level = str(int(row["value"]))
-                        if len(boss) >= 18:
-                            level += "<br> c"
                         if row["variable"] in timeline_data["variable"].to_list():
                             boss = "<span class='green'>%s</span>" % boss
                             level = "<span class='green'>%s</span>" % level
