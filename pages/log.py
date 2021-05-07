@@ -74,6 +74,7 @@ def log(username, virtual):
                              == boss_df["date"].max()]
             clues_l = clues_df[clues_df["date"]
                                == clues_df["date"].max()]
+            print(clues_l.head())
             skill_rl = skill_r_df[skill_r_df["date"]
                                   == skill_r_df["date"].max()]
 
@@ -97,12 +98,22 @@ def log(username, virtual):
                                == "overall"]["value"].values[0]
             overall_rank = skill_l[skill_l["variable"]
                                    == "overall"]["rank"].values[0]
+            total_clues = clues_l[clues_l["variable"]
+                                  == "clue_scrolls_all"]["value"].values[0]
+            total_bosses = boss_l["value"].sum()
 
-            cols_head = st.beta_columns(3)
-            cols_head[0].markdown(
+            cols_head1 = st.beta_columns(3)
+            cols_head1[0].markdown(
                 f"### Total Level:\n {int(total_level):,}")
-            cols_head[1].markdown(f"### Total XP:\n {int(total_xp):,}")
-            cols_head[2].markdown(f"### Overall Rank:\n {int(overall_rank):,}")
+            cols_head1[1].markdown(f"### Total XP:\n {int(total_xp):,}")
+            cols_head1[2].markdown(
+                f"### Overall Rank:\n {int(overall_rank):,}")
+
+            cols_head2 = st.beta_columns(2)
+            cols_head2[0].markdown(
+                f"### Total Clues:\n {int(total_clues):,}")
+            cols_head2[1].markdown(
+                f"### Total Bosses:\n {int(total_bosses):,}")
 
             st.markdown("## Recent Events")
             # have to define here so that skills and bosses that are mentioned
