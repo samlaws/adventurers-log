@@ -109,7 +109,7 @@ def log(username, virtual):
             cols_head1[2].markdown(
                 f"### Overall Rank:\n {int(overall_rank):,}")
 
-            cols_head2 = st.beta_columns(2)
+            cols_head2 = st.beta_columns(3)
             cols_head2[0].markdown(
                 f"### Total Clues:\n {int(total_clues):,}")
             cols_head2[1].markdown(
