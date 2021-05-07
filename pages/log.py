@@ -88,6 +88,7 @@ def log(username, virtual):
 
             st.title(username)
             # summary_data
+            # TODO: Add total clues and total bosses killed in a 2 col block under current summary
             total_level = skill_l[skill_l["variable"]
                                   == "overall"]["level"].values[0]
             total_xp = skill_l[skill_l["variable"]

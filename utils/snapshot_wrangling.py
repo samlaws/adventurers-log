@@ -84,6 +84,8 @@ def timeline_data_merge(boss_df, skill_df, level_table, virtual):
     skill_df = skill_df[skill_df["l_diffs"] != 0]
     skill_df["var_type"] = "skill"
 
+    # TODO: Also include clue scroll data in the activities df, combined
+
     combined = pd.concat([skill_df, boss_df]
                          ).sort_values(by=["date"], ascending=False)
 
