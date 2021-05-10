@@ -19,7 +19,8 @@ def skill_dash(username, period):
                 t = "<div><span class='green'>Player Found</span></div>"
                 st.sidebar.markdown(t, unsafe_allow_html=True)
 
-                player_data = api.get_player_snapshots(id=msg, period=period)
+                player_data = api.get_player_snapshots(
+                    id=msg[0], period=period)
 
                 cols = st.beta_columns((4, 1))
                 subtype = cols[1].radio(" ", ["XP", "Rank"])

@@ -13,7 +13,6 @@ def log_writer(timeline_data, messages):
     # takes the timeline data as input and calls other functions
     # depending on the type of event
 
-    print(timeline_data.columns)
     for index, row in timeline_data.iterrows():
 
         var_type = row["var_type"]
@@ -32,6 +31,7 @@ def log_writer(timeline_data, messages):
 
         with st.beta_expander(short_m):
             st.write(long_m)
+            # special case for 99s
             if var_type == "skill":
                 if val == 99:
                     st.balloons()
@@ -55,14 +55,12 @@ def boss_event_writer(row, var, var_type, date, messages):
             diffs)).replace("YYY", str(val))
         long_m += " (%s)" % date
     except KeyError:
-        # No message for skill or boss or clue, reverting to default
-        if var_type == "boss":
-            if row["diffs"] == row["value"]:
-                long_m = "I have now killed %s %s in total. (%s)" % (
-                    val, format_sel(var), date)
-            else:
-                long_m = "I killed %s %s. (%s)" % (
-                    diffs, format_sel(var), date)
+        if row["diffs"] == row["value"]:
+            long_m = "I have now killed %s %s in total. (%s)" % (
+                val, format_sel(var), date)
+        else:
+            long_m = "I killed %s %s. (%s)" % (
+                diffs, format_sel(var), date)
 
     return short_m, long_m
 
@@ -75,14 +73,12 @@ def clue_event_writer(row, var, var_type, date, messages):
         var).split(" ")[2])
     if diffs > 1:
         short_m += "s"
-
     try:
         long_m = random.choice(messages[var_type][var])
         long_m = long_m.replace("XXX", str(
             diffs)).replace("YYY", str(val))
         long_m += " (%s)" % date
     except KeyError:
-
         shorter_m = " ".join(short_m.split(" ")[1:])
         if row["diffs"] == row["value"]:
             long_m = "I completed my first %s. I have now completed %s %s. (%s)" % (
@@ -106,14 +102,12 @@ def skill_event_writer(row, var, var_type, date, messages):
         int(diffs), format_sel(var))
     if diffs > 1:
         short_m = short_m.replace("level", "levels")
-
     try:
         long_m = random.choice(messages[var_type][var])
         long_m = long_m.replace("XXX", str(
             diffs)).replace("YYY", str(val))
         long_m += " (%s)" % date
     except KeyError:
-        # No message for skill or boss or clue, reverting to default
         diffs = int(row["l_diffs"])
         if diffs > 1:
             long_m = "I gained %s levels in %s, I am now level %s. (%s)" % (

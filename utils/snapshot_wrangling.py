@@ -3,6 +3,8 @@ import numpy as np
 import streamlit as st
 from utils.api import ApiMethods
 
+pd.options.mode.chained_assignment = None
+
 
 def snapshot_to_df(snapshots, type, subtype="skill/xp"):
     sd = []
@@ -92,8 +94,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     clue_df['diffs'] = clue_df['value'].diff()
     mask = clue_df.variable != clue_df.variable.shift(1)
     clue_df['diffs'][mask] = np.nan
-    clue_df.dropna(inplace=True)
-    clue_df["diffs"] = clue_df["diffs"].abs()
+    clue_df = clue_df.dropna()
+    clue_df.loc[:, "diffs"] = clue_df["diffs"].abs()
     clue_df = clue_df[clue_df["diffs"] != 0]
     clue_df["var_type"] = "clue"
 

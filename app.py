@@ -8,6 +8,7 @@ from pages.skill_dash import skill_dash
 from pages.boss_dash import boss_dash
 from utils.config import format_sel, local_css
 
+pd.options.mode.chained_assignment = None
 local_css("style.css")
 
 
