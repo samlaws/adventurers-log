@@ -10,6 +10,8 @@ from utils.config import format_sel, boss_dict
 from utils.log_writer import log_writer
 from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
 
+pd.options.mode.chained_assignment = None
+
 
 def timeline_plot(timeline_data):
     # Choose some nice levels
@@ -59,9 +61,10 @@ def log(username, virtual):
             level_table = pd.read_csv("data/level_table.csv")
 
             # load the player data from wiseoldman
-            player_data = api.get_player_snapshots(id=msg, period="month")
+            player_data = api.get_player_snapshots(id=msg[0], period="month")
             if len(player_data) < 50:
-                player_data = api.get_player_snapshots(id=msg, period="year")
+                player_data = api.get_player_snapshots(
+                    id=msg[0], period="year")
             boss_df = snapshot_to_df(player_data, type="boss").replace(-1, 0)
             skill_df = snapshot_to_df(
                 player_data, type="skills").replace(-1, 0)
@@ -77,7 +80,6 @@ def log(username, virtual):
                              == boss_df["date"].max()]
             clues_l = clues_df[clues_df["date"]
                                == clues_df["date"].max()]
-            print(clues_l.head())
             skill_rl = skill_r_df[skill_r_df["date"]
                                   == skill_r_df["date"].max()]
 

@@ -14,13 +14,18 @@ class ApiMethods():
 
         responses = requests.get(url, params=obj).json()
         if self.username in [x["username"] for x in responses]:
-            id = list(filter(lambda x: x["username"] ==
-                             self.username, responses))[0]["id"]
+            id_ = list(filter(lambda x: x["username"] ==
+                              self.username, responses))[0]["id"]
+            type_ = list(filter(lambda x: x["username"] ==
+                                self.username, responses))[0]["type"]
 
-            return True, id
+            print("PLAYER FOUND WITH NAME: %s, ID: %s, TYPE: %s" %
+                  (self.username, id_, type_))
+            msg = (id_, type_)
+            return True, msg
 
         else:
-            return False, "Player not found"
+            return False, "Player not found", "Still not found"
 
     def update_player(self, base_url=base_url):
         url = base_url + "/players/track/"
