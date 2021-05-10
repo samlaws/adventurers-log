@@ -6,6 +6,10 @@ def format_sel(label):
     return string.capwords(label.replace("_", " ")).replace("Rank", "rank")
 
 
+def format_sel_boss(label):
+    return boss_dict[label]
+
+
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown('<style>{}</style>'.format(f.read()),
@@ -13,6 +17,7 @@ def local_css(file_name):
 
 
 boss_dict = {
+    "abyssal_sire": "Abyssal Sire",
     "alchemical_hydra": "Alchemical Hydra",
     "barrows_chests": "Barrows Chests",
     "bryophyta": "Bryophyta",
@@ -27,7 +32,7 @@ boss_dict = {
     "crazy_archaeologist": "Crazy Arch",
     "dagannoth_prime": "Dag. Prime",
     "dagannoth_rex": "Dag. Rex",
-    "dagannoth_supreme": "Dag. Supreme.",
+    "dagannoth_supreme": "Dag. Supreme",
     "deranged_archaeologist": "Deranged Arch",
     "general_graardor": "Graardor",
     "giant_mole": "Giant Mole",

@@ -118,6 +118,8 @@ def log(username, virtual):
                 f"### Total Clues:\n {int(total_clues):,}")
             cols_head2[1].markdown(
                 f"### Total Bosses:\n {int(total_bosses):,}")
+            cols_head2[2].markdown(
+                f"### Player Type:\n {format_sel(msg[1])}")
 
             st.markdown("## Recent Events")
             # have to define here so that skills and bosses that are mentioned
@@ -178,31 +180,30 @@ def log(username, virtual):
                 cols_bosses = st.beta_columns((2, 1, 2, 1, 2, 1))
                 left, right = 0, 1
                 for index, row in boss_l.iterrows():
-                    if index != 0:  # ignore overall
-                        if left == 6:  # once the last column has been reached, reset
-                            left, right = 0, 1
+                    if left == 6:  # once the last column has been reached, reset
+                        left, right = 0, 1
 
-                        try:
-                            boss = boss_dict[row["variable"]]
-                        except KeyError:
-                            boss = "%s:" % (format_sel(row["variable"]))
-                        boss += ":"
+                    try:
+                        boss = boss_dict[row["variable"]]
+                    except KeyError:
+                        boss = "%s:" % (format_sel(row["variable"]))
+                    boss += ":"
 
-                        val = str(int(row["value"]))
-                        if val == "0":
-                            val = "--"
-                        else:
-                            val = f"{int(val):,}"
+                    val = str(int(row["value"]))
+                    if val == "0":
+                        val = "--"
+                    else:
+                        val = f"{int(val):,}"
 
-                        if row["variable"] in timeline_data["variable"].to_list():
-                            boss = "<span class='green'>%s</span>" % boss
-                            val = "<span class='green'>%s</span>" % val
-                        cols_bosses[left].markdown(
-                            boss, unsafe_allow_html=True)
-                        cols_bosses[right].markdown(
-                            val, unsafe_allow_html=True)
-                        left += 2
-                        right += 2
+                    if row["variable"] in timeline_data["variable"].to_list():
+                        boss = "<span class='green'>%s</span>" % boss
+                        val = "<span class='green'>%s</span>" % val
+                    cols_bosses[left].markdown(
+                        boss, unsafe_allow_html=True)
+                    cols_bosses[right].markdown(
+                        val, unsafe_allow_html=True)
+                    left += 2
+                    right += 2
 
         else:
             t = "<div><span class='red'>Player not found</span></div>"

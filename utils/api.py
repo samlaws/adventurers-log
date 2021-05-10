@@ -25,7 +25,7 @@ class ApiMethods():
             return True, msg
 
         else:
-            return False, "Player not found", "Still not found"
+            return False, "Player not found"
 
     def update_player(self, base_url=base_url):
         url = base_url + "/players/track/"
