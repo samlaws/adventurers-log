@@ -90,8 +90,7 @@ def log(username, virtual):
             skill_l.iloc[0, 4] = skill_l["level"].sum()
 
             st.title(username)
-            # summary_data
-            # TODO: Add total clues and total bosses killed in a 2 col block under current summary
+            # summary data
             total_level = skill_l[skill_l["variable"]
                                   == "overall"]["level"].values[0]
             total_xp = skill_l[skill_l["variable"]
@@ -121,16 +120,24 @@ def log(username, virtual):
             timeline_data = timeline_data_merge(
                 boss_df, skill_df, clues_df, level_table, virtual).head(15)
 
+            # This could be a util function that takes the timeline data as an argument
             for index, row in timeline_data.iterrows():
 
                 var_type = row["var_type"]
                 var = row["variable"]
                 date = row["date"].strftime('%d %B %Y')
+
                 if var_type == "boss":
                     diffs = int(row["diffs"])
                     val = int(row["value"])
-                    short_m = "%s %s" % (
-                        int(diffs), format_sel(var))
+                    if row["diffs"] == row["value"]:
+                        # if these are equal then value gone from 0 to current, meaning freshly ranked
+                        # wrong to write "killed 10 jad" when mostly likely only killed 1 and got over
+                        # the treshold
+                        short_m = "Now ranked for %s" % (format_sel(var))
+                    else:
+                        short_m = "%s %s" % (
+                            int(diffs), format_sel(var))
                 elif var_type == "clue":
                     diffs = int(row["diffs"])
                     val = int(row["value"])
@@ -149,15 +156,26 @@ def log(username, virtual):
                     long_m = random.choice(messages[var_type][var])
                     long_m = long_m.replace("XXX", str(
                         diffs)).replace("YYY", str(val))
+                    long_m += " (%s)" % date
                 except KeyError:
                     # No message for skill or boss or clue, reverting to default
                     if var_type == "boss":
-                        long_m = "I killed %s %s. (%s)" % (
-                            diffs, format_sel(var), date)
+                        if row["diffs"] == row["value"]:
+                            long_m = "I have now killed %s %s in total. (%s)" % (
+                                val, format_sel(var), date)
+                        else:
+                            long_m = "I killed %s %s. (%s)" % (
+                                diffs, format_sel(var), date)
                     elif var_type == "clue":
-                        long_m = "I completed %s. (%s)" % (
-                            short_m, date)
+                        shorter_m = " ".join(short_m.split(" ")[1:])
+                        if row["diffs"] == row["value"]:
+                            long_m = "I completed my first %s. I have now completed %s %s (%s)" % (
+                                shorter_m, val, shorter_m, date)
+                        else:
+                            long_m = "I completed %s. I have now completed %s %s (%s)" % (
+                                short_m, val, shorter_m, date)
                     else:
+                        diffs = int(row["l_diffs"])
                         if diffs > 1:
                             long_m = "I gained %s levels in %s, I am now level %s (%s)" % (
                                 diffs, format_sel(var), val, date)
@@ -202,7 +220,11 @@ def log(username, virtual):
                         if left == 8:  # once the last column has been reached, reset
                             left, right = 0, 1
                         skill = "%s:" % (format_sel(row["variable"]))
-                        level = str(int(row["level"]))
+                        try:
+                            level = str(int(row["level"]))
+                        except ValueError:
+                            # Unranked skills
+                            level = "1"
                         if row["variable"] in timeline_data["variable"].to_list():
                             skill = "<span class='green'>%s</span>" % skill
                             level = "<span class='green'>%s</span>" % level

@@ -96,7 +96,6 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     clue_df["diffs"] = clue_df["diffs"].abs()
     clue_df = clue_df[clue_df["diffs"] != 0]
     clue_df["var_type"] = "clue"
-    print(clue_df)
 
     combined = pd.concat([skill_df, boss_df, clue_df]
                          ).sort_values(by=["date"], ascending=False)

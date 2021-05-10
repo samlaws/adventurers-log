@@ -12,9 +12,5 @@
             "I subdued the Wintertodt XXX times, I have now subdued the Wintertodt YYY times in total."
         ]
     },
-    "skill": {
-        "prayer": [
-            "I proved my devotion to Saradomin and advanced XXX levels in Prayer, I am now level YYY."
-        ]
-    }
+    "skill": {}
 }
