@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import traceback
-import matplotlib.pyplot as plt
 import random
 import json
 
 from utils.api import ApiMethods
 from utils.config import format_sel, boss_dict
+from utils.log_writer import log_writer
 from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
 
 
@@ -123,77 +123,7 @@ def log(username, virtual):
             timeline_data = timeline_data_merge(
                 boss_df, skill_df, clues_df, level_table, virtual).head(15)
 
-            # This could be a util function that takes the timeline data as an argument
-            for index, row in timeline_data.iterrows():
-
-                var_type = row["var_type"]
-                var = row["variable"]
-                date = row["date"].strftime('%d %B %Y')
-
-                if var_type == "boss":
-                    diffs = int(row["diffs"])
-                    val = int(row["value"])
-                    if row["diffs"] == row["value"]:
-                        # if these are equal then value gone from 0 to current, meaning freshly ranked
-                        # wrong to write "killed 10 jad" when mostly likely only killed 1 and got over
-                        # the treshold
-                        short_m = "Now ranked for %s" % (format_sel(var))
-                    else:
-                        short_m = "%s %s" % (
-                            int(diffs), format_sel(var))
-                elif var_type == "clue":
-                    diffs = int(row["diffs"])
-                    val = int(row["value"])
-                    short_m = "%s %s clue scroll" % (int(diffs), format_sel(
-                        var).split(" ")[2])
-                    if diffs > 1:
-                        short_m += "s"
-                else:
-                    diffs = int(row["l_diffs"])
-                    val = int(row["level"])
-                    short_m = "%s level gained in %s" % (
-                        int(diffs), format_sel(var))
-                    if diffs > 1:
-                        short_m = short_m.replace("level", "levels")
-                try:
-                    long_m = random.choice(messages[var_type][var])
-                    long_m = long_m.replace("XXX", str(
-                        diffs)).replace("YYY", str(val))
-                    long_m += " (%s)" % date
-                except KeyError:
-                    # No message for skill or boss or clue, reverting to default
-                    if var_type == "boss":
-                        if row["diffs"] == row["value"]:
-                            long_m = "I have now killed %s %s in total. (%s)" % (
-                                val, format_sel(var), date)
-                        else:
-                            long_m = "I killed %s %s. (%s)" % (
-                                diffs, format_sel(var), date)
-                    elif var_type == "clue":
-                        shorter_m = " ".join(short_m.split(" ")[1:])
-                        if row["diffs"] == row["value"]:
-                            long_m = "I completed my first %s. I have now completed %s %s. (%s)" % (
-                                shorter_m, val, shorter_m, date)
-                        else:
-                            if val > 1:
-                                long_m = "I completed %s. I have now completed %s %s. (%s)" % (
-                                    short_m, val, shorter_m+"s", date)
-                            else:
-                                long_m = "I completed %s. I have now completed %s %s. (%s)" % (
-                                    short_m, val, shorter_m, date)
-                    else:
-                        diffs = int(row["l_diffs"])
-                        if diffs > 1:
-                            long_m = "I gained %s levels in %s, I am now level %s. (%s)" % (
-                                diffs, format_sel(var), val, date)
-                        else:
-                            long_m = "I gained a level in %s, I am now level %s. (%s)" % (
-                                format_sel(var), val, date)
-
-                with st.beta_expander(short_m):
-                    st.write(long_m)
-                    if (var_type == "skill") & (val == 99):
-                        st.balloons()
+            log_writer(timeline_data, messages=messages)
 
             st.markdown("## Hi-scores")
 
