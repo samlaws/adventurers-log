@@ -254,6 +254,8 @@ def log(username, virtual):
                             boss = boss_dict[row["variable"]]
                         except KeyError:
                             boss = "%s:" % (format_sel(row["variable"]))
+                        boss += ":"
+
                         val = str(int(row["value"]))
                         if val == "0":
                             val = "--"
