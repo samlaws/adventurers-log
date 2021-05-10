@@ -172,18 +172,22 @@ def log(username, virtual):
                     elif var_type == "clue":
                         shorter_m = " ".join(short_m.split(" ")[1:])
                         if row["diffs"] == row["value"]:
-                            long_m = "I completed my first %s. I have now completed %s %s (%s)" % (
+                            long_m = "I completed my first %s. I have now completed %s %s. (%s)" % (
                                 shorter_m, val, shorter_m, date)
                         else:
-                            long_m = "I completed %s. I have now completed %s %s (%s)" % (
-                                short_m, val, shorter_m, date)
+                            if val > 1:
+                                long_m = "I completed %s. I have now completed %s %s. (%s)" % (
+                                    short_m, val, shorter_m+"s", date)
+                            else:
+                                long_m = "I completed %s. I have now completed %s %s. (%s)" % (
+                                    short_m, val, shorter_m, date)
                     else:
                         diffs = int(row["l_diffs"])
                         if diffs > 1:
-                            long_m = "I gained %s levels in %s, I am now level %s (%s)" % (
+                            long_m = "I gained %s levels in %s, I am now level %s. (%s)" % (
                                 diffs, format_sel(var), val, date)
                         else:
-                            long_m = "I gained a level in %s, I am now level %s (%s)" % (
+                            long_m = "I gained a level in %s, I am now level %s. (%s)" % (
                                 format_sel(var), val, date)
 
                 with st.beta_expander(short_m):
@@ -250,16 +254,19 @@ def log(username, virtual):
                             boss = boss_dict[row["variable"]]
                         except KeyError:
                             boss = "%s:" % (format_sel(row["variable"]))
-                        level = str(int(row["value"]))
-                        if level == "0":
-                            level = "--"
+                        val = str(int(row["value"]))
+                        if val == "0":
+                            val = "--"
+                        else:
+                            val = f"{int(val):,}"
+
                         if row["variable"] in timeline_data["variable"].to_list():
                             boss = "<span class='green'>%s</span>" % boss
-                            level = "<span class='green'>%s</span>" % level
+                            val = "<span class='green'>%s</span>" % val
                         cols_bosses[left].markdown(
                             boss, unsafe_allow_html=True)
                         cols_bosses[right].markdown(
-                            level, unsafe_allow_html=True)
+                            val, unsafe_allow_html=True)
                         left += 2
                         right += 2
 
