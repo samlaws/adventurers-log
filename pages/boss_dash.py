@@ -97,8 +97,9 @@ def boss_dash(username, period):
             else:
                 t = "<div><span class='red'>Player not found</span></div>"
                 st.sidebar.markdown(t, unsafe_allow_html=True)
-                t = "<div><span class='red'>Either they do not exist, or are not 1337 enough to be tracked on Wiseoldman.net</span></div>"
+                t = "<div><span class='red'>Either player doesn't exist, or are not tracked on Wiseoldman.net</span></div>"
                 st.sidebar.markdown(t, unsafe_allow_html=True)
+
         except IndexError:
             st.write("")
             t = "<span class='red'>No information from that time period</span>"

@@ -49,6 +49,9 @@ def log(username, virtual):
             t = "<div><span class='green'>Player Found</span></div>"
             st.sidebar.markdown(t, unsafe_allow_html=True)
 
+            # update player
+            api.update_player()
+
             # load in supporting data - messages.json with custom messages
             # for the log and the level up table
             with open('data/messages.json') as json_file:
@@ -244,6 +247,8 @@ def log(username, virtual):
                             left, right = 0, 1
                         boss = "%s:" % (format_sel(row["variable"]))
                         level = str(int(row["value"]))
+                        if level == "0":
+                            level = "?"
                         if row["variable"] in timeline_data["variable"].to_list():
                             boss = "<span class='green'>%s</span>" % boss
                             level = "<span class='green'>%s</span>" % level

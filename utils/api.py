@@ -11,8 +11,8 @@ class ApiMethods():
     def check_player_exists(self, base_url=base_url):
         url = base_url + "/players/search/"
         obj = {"username": self.username}
-        responses = requests.get(url, params=obj).json()
 
+        responses = requests.get(url, params=obj).json()
         if self.username in [x["username"] for x in responses]:
             id = list(filter(lambda x: x["username"] ==
                              self.username, responses))[0]["id"]
@@ -21,6 +21,13 @@ class ApiMethods():
 
         else:
             return False, "Player not found"
+
+    def update_player(self, base_url=base_url):
+        url = base_url + "/players/track/"
+        obj = {"username": self.username}
+        response = requests.post(url, obj).json()
+
+        return response
 
     def get_player_details(self, id, base_url=base_url):
         url = base_url + "/players/%s" % id
