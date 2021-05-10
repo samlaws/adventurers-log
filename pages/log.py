@@ -7,7 +7,7 @@ import random
 import json
 
 from utils.api import ApiMethods
-from utils.config import format_sel
+from utils.config import format_sel, boss_dict
 from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
 
 
@@ -227,7 +227,7 @@ def log(username, virtual):
                             level = str(int(row["level"]))
                         except ValueError:
                             # Unranked skills
-                            level = "1"
+                            level = "--"
                         if row["variable"] in timeline_data["variable"].to_list():
                             skill = "<span class='green'>%s</span>" % skill
                             level = "<span class='green'>%s</span>" % level
@@ -245,10 +245,14 @@ def log(username, virtual):
                     if index != 0:  # ignore overall
                         if left == 6:  # once the last column has been reached, reset
                             left, right = 0, 1
-                        boss = "%s:" % (format_sel(row["variable"]))
+
+                        try:
+                            boss = boss_dict[row["variable"]]
+                        except KeyError:
+                            boss = "%s:" % (format_sel(row["variable"]))
                         level = str(int(row["value"]))
                         if level == "0":
-                            level = "?"
+                            level = "--"
                         if row["variable"] in timeline_data["variable"].to_list():
                             boss = "<span class='green'>%s</span>" % boss
                             level = "<span class='green'>%s</span>" % level
