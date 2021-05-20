@@ -13,35 +13,6 @@ from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
 pd.options.mode.chained_assignment = None
 
 
-def timeline_plot(timeline_data):
-    # Choose some nice levels
-    levels = np.tile([-3, 3, -2, 2, -1, 1],
-                     int(np.ceil(len(timeline_data["date"])/6)))[:len(timeline_data["date"])]
-
-    # Create figure and plot a stem plot with the date
-    fig, ax = plt.subplots(figsize=(6, 20))
-
-    # The vertical stems.
-    ax.hlines(timeline_data["date"], 0, levels, color="tab:red")
-    ax.plot(np.zeros_like(timeline_data["date"]), timeline_data["date"], "-o",
-            color="k", markerfacecolor="w")  # Baseline and markers on it.
-
-    # annotate lines
-    for d, l, r in zip(timeline_data["date"], levels, timeline_data["message"]):
-        ax.annotate(r, xy=(l, d),
-                    xytext=(np.sign(l)*3, -3), textcoords="offset points",
-                    horizontalalignment="right",
-                    verticalalignment="bottom" if l > 0 else "top")
-
-    # remove y axis and spines
-    ax.xaxis.set_visible(False)
-    ax.spines[["right", "top", "bottom"]].set_visible(False)
-
-    ax.margins(y=0.1)
-    plt.axis("off")
-    return fig
-
-
 def log(username, virtual):
 
     if username:
