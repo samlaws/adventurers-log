@@ -18,6 +18,7 @@ def log(username, virtual):
     if username:
         api = ApiMethods(username=username)
         status, msg = api.check_player_exists()
+        print(msg)
         if status:
             t = "<div><span class='green'>Player Found</span></div>"
             st.sidebar.markdown(t, unsafe_allow_html=True)
@@ -100,6 +101,7 @@ def log(username, virtual):
 
             log_writer(timeline_data, messages=messages)
 
+            # Hi-scores section
             st.markdown("## Hi-scores")
 
             with st.beta_expander("Clues"):
