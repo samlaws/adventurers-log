@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
+import random
+import os
 
 from pages.log import log
 from pages.skill_dash import skill_dash
@@ -31,6 +33,16 @@ def main():
 
     username = st.sidebar.selectbox(
         "Enter a username", ["K1LLERS0FA", "Dr VinDiesel"])
+
+    if username == "K1LLERS0FA":
+        filename = random.choice(os.listdir("static/img/sofa"))
+        st.sidebar.image(f"static/img/sofa/{filename}")
+    elif username == "Dr VinDiesel":
+        filename = random.choice(os.listdir("static/img/vinny"))
+        try:
+            st.sidebar.image(f"static/img/vinny/{filename}")
+        except:
+            st.sidebar.video(f"static/img/vinny/{filename}")
 
     if page in ["Skilling Dashboard",  "Bossing Dashboard"]:
         period = st.sidebar.selectbox('Tracking period:',

@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import traceback
-import random
 import json
 
 from utils.api import ApiMethods
@@ -97,11 +95,8 @@ def log(username, virtual):
             # have to define here so that skills and bosses that are mentioned
             # can be highlighted
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, clues_df, level_table, virtual).head(50)
-
-            print("final timeline data:\n", timeline_data)
-
-            log_writer(timeline_data, messages=messages)
+                boss_df, skill_df, clues_df, level_table, virtual)
+            log_writer(timeline_data.head(25), messages=messages)
 
             # Hi-scores section
             st.markdown("## Hi-scores")
