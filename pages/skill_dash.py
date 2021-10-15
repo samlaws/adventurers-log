@@ -27,7 +27,7 @@ def skill_dash(username, period):
                 scale_dict = {"Rank": True, "XP": False}
 
                 skill_df = snapshot_to_df(
-                    player_data, type="skills", subtype=subtype)
+                    player_data, type="skills", subtype=subtype).replace(-1, 0)
 
                 skill_list = list(skill_df["variable"].unique())
                 filter_skills = cols[0].multiselect(
