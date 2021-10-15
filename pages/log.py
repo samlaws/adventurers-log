@@ -97,7 +97,7 @@ def log(username, virtual):
             # have to define here so that skills and bosses that are mentioned
             # can be highlighted
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, clues_df, level_table, virtual).head(15)
+                boss_df, skill_df, clues_df, level_table, virtual).head(50)
 
             print("final timeline data:\n", timeline_data)
 

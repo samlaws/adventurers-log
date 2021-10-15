@@ -44,7 +44,7 @@ def boss_event_writer(row, var, var_type, date, messages):
     if row["diffs"] == row["value"]:
         # if these are equal then value gone from 0 to current, meaning freshly ranked
         # wrong to write "killed 10 jad" when mostly likely only killed 1 and got over
-        # the treshold
+        # the threshold
         short_m = "Now ranked for %s" % (format_sel(var))
     else:
         short_m = "%s %s" % (

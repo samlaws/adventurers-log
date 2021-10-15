@@ -73,7 +73,7 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
 
     # when leveling from 0xp skills have nan level
-    skill_df.fillna(0, inplace=True)
+    #skill_df.fillna(0, inplace=True)
 
     skill_df["level"] = skill_df["level"] + 1
     if not virtual:
@@ -105,6 +105,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                          ).sort_values(by=["date"], ascending=False)
 
     combined["day"] = combined["date"].dt.day
+    combined.to_csv('combineddata.csv', index=False)
+    print(combined)
 
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
@@ -119,6 +121,6 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                        'l_diffs': 'sum'
                        }).reset_index(drop=True)
 
-    print(df_test.query("variable == 'agility'"))
+    df_test.to_csv('test_data.csv', index=False)
 
     return df_test
