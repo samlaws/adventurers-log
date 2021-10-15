@@ -99,6 +99,8 @@ def log(username, virtual):
             timeline_data = timeline_data_merge(
                 boss_df, skill_df, clues_df, level_table, virtual).head(15)
 
+            print("final timeline data:\n", timeline_data)
+
             log_writer(timeline_data, messages=messages)
 
             # Hi-scores section

@@ -69,9 +69,12 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df['diffs'][mask] = np.nan
     skill_df.dropna(inplace=True)
     skill_df["diffs"] = skill_df["diffs"].abs()
-
     bins = level_table["exp"].to_list()
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
+
+    # when leveling from 0xp skills have nan level
+    skill_df.fillna(0, inplace=True)
+
     skill_df["level"] = skill_df["level"] + 1
     if not virtual:
         skill_df["level"] = np.clip(
@@ -82,7 +85,6 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df['l_diffs'][mask] = np.nan
     skill_df.dropna(inplace=True)
     skill_df["l_diffs"] = skill_df["l_diffs"].abs()
-
     skill_df = skill_df[skill_df["l_diffs"] != 0]
     skill_df["var_type"] = "skill"
 
@@ -116,5 +118,7 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                        'level': 'first',
                        'l_diffs': 'sum'
                        }).reset_index(drop=True)
+
+    print(df_test.query("variable == 'agility'"))
 
     return df_test
