@@ -68,15 +68,12 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['diffs'][mask] = np.nan
     skill_df.dropna(inplace=True)
+
     skill_df["diffs"] = skill_df["diffs"].abs()
     bins = level_table["exp"].to_list()
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
-    print(skill_df.query("variable == 'agility'"))
-
-    # when leveling from 0xp skills have nan level
-    #skill_df.fillna(0, inplace=True)
-
     skill_df["level"] = skill_df["level"] + 1
+
     if not virtual:
         skill_df["level"] = np.clip(
             skill_df['level'], a_max=99, a_min=None)
@@ -84,10 +81,6 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df['l_diffs'] = skill_df['level'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['l_diffs'][mask] = np.nan
-
-    print(skill_df.query("variable == 'agility'"))
-
-    print(skill_df.query("variable == 'woodcutting'"))
 
     skill_df["l_diffs"] = np.where(
         (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
@@ -100,8 +93,6 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df.sort_values(by=["date"], ascending=False, inplace=True)
     skill_df.drop_duplicates(
         subset=["variable", "level", "l_diffs"], keep="last", inplace=True)
-
-    skill_df.to_csv("skilldf.csv")
 
     clue_df = clue_df[clue_df["variable"].isin(['clue_scrolls_beginner', 'clue_scrolls_easy',
                                                 'clue_scrolls_medium', 'clue_scrolls_hard', 'clue_scrolls_elite',
