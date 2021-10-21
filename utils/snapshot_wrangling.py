@@ -49,6 +49,12 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
 
 def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df = skill_df[skill_df["variable"] != "overall"]
+    skill_df[skill_df["variable"] == "woodcutting"].to_csv("wc1.csv")
+
+    skill_df["value"] = np.where(
+        skill_df["value"] == 0, skill_df["value"].shift(1), skill_df["value"])
+
+    skill_df[skill_df["variable"] == "construction"].to_csv("wc2.csv")
 
     # boss killing sessions over period
     boss_df.sort_values(
@@ -82,8 +88,10 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['l_diffs'][mask] = np.nan
 
+    skill_df[skill_df["variable"] == "woodcutting"].to_csv("wc.csv")
+
     skill_df["l_diffs"] = np.where(
-        (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
+        (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["l_diffs"]-1, skill_df["l_diffs"])
 
     skill_df.dropna(inplace=True)
     skill_df["l_diffs"] = skill_df["l_diffs"].abs()
@@ -111,6 +119,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                          ).sort_values(by=["date"], ascending=False)
 
     combined["day"] = combined["date"].dt.day
+
+    print(combined)
 
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
