@@ -6,7 +6,7 @@ import string
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
-from utils.config import format_sel, format_sel_boss
+from utils.config import format_sel_boss, list_formatter
 
 
 def boss_dash(username, period):
@@ -28,7 +28,7 @@ def boss_dash(username, period):
 
                 boss_df = snapshot_to_df(
                     player_data, type="boss", subtype=subtype)
-                boss_list = list(boss_df["variable"].unique())
+                boss_list = list_formatter(boss_df["variable"].unique())
 
                 filter_boss = cols[0].multiselect(
                     'Enter the bosses to track/compare',

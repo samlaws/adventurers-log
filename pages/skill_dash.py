@@ -6,7 +6,7 @@ import traceback
 
 from utils.api import ApiMethods
 from utils.snapshot_wrangling import snapshot_to_df
-from utils.config import format_sel
+from utils.config import format_sel, list_formatter
 
 
 def skill_dash(username, period):
@@ -29,7 +29,11 @@ def skill_dash(username, period):
                 skill_df = snapshot_to_df(
                     player_data, type="skills", subtype=subtype).replace(-1, 0)
 
-                skill_list = list(skill_df["variable"].unique())
+                skill_df["value"] = np.where(
+                    skill_df["value"] == 0, skill_df["value"].shift(1), skill_df["value"])
+
+                skill_list = list_formatter(skill_df["variable"].unique())
+                print(skill_list)
                 filter_skills = cols[0].multiselect(
                     'Enter the skills to track/compare',
                     options=skill_list, format_func=format_sel)

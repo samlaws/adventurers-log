@@ -2,6 +2,17 @@ import string
 import streamlit as st
 
 
+def list_formatter(series):
+
+    l = sorted(list(series))
+
+    if "overall" in l:
+        l.remove("overall")
+        l.insert(0, "overall")
+
+    return l
+
+
 def format_sel(label):
     return string.capwords(label.replace("_", " ")).replace("Rank", "rank")
 
