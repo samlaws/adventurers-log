@@ -10,11 +10,15 @@ from pages.skill_dash import skill_dash
 from pages.boss_dash import boss_dash
 from utils.config import format_sel, local_css
 
-pd.options.mode.chained_assignment = None
-local_css("style.css")
-
 
 def main():
+
+    st.set_page_config(page_title="Adventurer's Log",
+                       page_icon="static/img/73.png")
+
+    pd.options.mode.chained_assignment = None
+    local_css("style.css")
+
     # Register your pages
     pages = {
         "Adventurer's Log": log,
@@ -33,16 +37,6 @@ def main():
 
     username = st.sidebar.selectbox(
         "Enter a username", ["K1LLERS0FA", "Dr VinDiesel"])
-
-    if username == "K1LLERS0FA":
-        filename = random.choice(os.listdir("static/img/sofa"))
-        st.sidebar.image(f"static/img/sofa/{filename}")
-    elif username == "Dr VinDiesel":
-        filename = random.choice(os.listdir("static/img/vinny"))
-        try:
-            st.sidebar.image(f"static/img/vinny/{filename}")
-        except:
-            st.sidebar.video(f"static/img/vinny/{filename}")
 
     if page in ["Skilling Dashboard",  "Bossing Dashboard"]:
         period = st.sidebar.selectbox('Tracking period:',
