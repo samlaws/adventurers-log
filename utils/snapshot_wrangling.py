@@ -120,11 +120,9 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
 
     combined["day"] = combined["date"].dt.day
 
-    print(combined)
-
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
-    df_test = combined.groupby([(combined.variable != combined.variable.shift(
+    combined = combined.groupby([(combined.variable != combined.variable.shift(
     )).cumsum(), (combined.day != combined.day.shift(
     )).cumsum()]).agg({'date': 'first',
                       'var_type': 'first',
@@ -135,4 +133,4 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                        'l_diffs': 'sum'
                        }).reset_index(drop=True)
 
-    return df_test
+    return combined
