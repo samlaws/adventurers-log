@@ -33,7 +33,7 @@ def skill_dash(username, period):
                     skill_df["value"] == 0, skill_df["value"].shift(1), skill_df["value"])
 
                 skill_list = list_formatter(skill_df["variable"].unique())
-                print(skill_list)
+
                 filter_skills = cols[0].multiselect(
                     'Enter the skills to track/compare',
                     options=skill_list, format_func=format_sel)
