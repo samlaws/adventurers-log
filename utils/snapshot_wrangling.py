@@ -47,14 +47,10 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
         return df[~df["variable"].str.contains("_rank")]
 
 
-def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
+def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group):
     skill_df = skill_df[skill_df["variable"] != "overall"]
-    skill_df[skill_df["variable"] == "woodcutting"].to_csv("wc1.csv")
-
     skill_df["value"] = np.where(
         skill_df["value"] == 0, skill_df["value"].shift(1), skill_df["value"])
-
-    skill_df[skill_df["variable"] == "construction"].to_csv("wc2.csv")
 
     # boss killing sessions over period
     boss_df.sort_values(
@@ -87,11 +83,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
     skill_df['l_diffs'] = skill_df['level'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['l_diffs'][mask] = np.nan
-
-    skill_df[skill_df["variable"] == "woodcutting"].to_csv("wc.csv")
-
     skill_df["l_diffs"] = np.where(
-        (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["l_diffs"]-1, skill_df["l_diffs"])
+        (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
 
     skill_df.dropna(inplace=True)
     skill_df["l_diffs"] = skill_df["l_diffs"].abs()
@@ -122,10 +115,11 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
 
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
-    combined = combined.groupby([(combined.variable != combined.variable.shift(
+    sess = combined.groupby([(combined.variable != combined.variable.shift(
     )).cumsum(), (combined.day != combined.day.shift(
     )).cumsum()]).agg({'date': 'first',
-                      'var_type': 'first',
+                       'day': 'first',
+                       'var_type': 'first',
                        'variable': 'first',
                        'value': 'first',
                        'diffs': 'sum',
@@ -133,4 +127,15 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual):
                        'l_diffs': 'sum'
                        }).reset_index(drop=True)
 
-    return combined
+    day = sess.groupby(["variable", "day"]).agg({'date': 'first',
+                                                'var_type': 'first',
+                                                 'variable': 'first',
+                                                 'value': 'first',
+                                                 'diffs': 'sum',
+                                                 'level': 'first',
+                                                 'l_diffs': 'sum'
+                                                 }).reset_index(drop=True).sort_values(by=["date"], ascending=False)
+    if group == "session":
+        return sess
+    elif group == "day":
+        return day

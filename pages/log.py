@@ -11,7 +11,7 @@ from utils.snapshot_wrangling import snapshot_to_df, timeline_data_merge
 pd.options.mode.chained_assignment = None
 
 
-def log(username, virtual):
+def log(username, virtual, group):
 
     if username:
         api = ApiMethods(username=username)
@@ -95,7 +95,8 @@ def log(username, virtual):
             # have to define here so that skills and bosses that are mentioned
             # can be highlighted
             timeline_data = timeline_data_merge(
-                boss_df, skill_df, clues_df, level_table, virtual)
+                boss_df, skill_df, clues_df, level_table, virtual, group)
+            print(timeline_data)
             log_writer(timeline_data.head(25), messages=messages)
 
             # Hi-scores section
