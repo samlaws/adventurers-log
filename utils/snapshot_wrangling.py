@@ -66,6 +66,9 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
     # xp gaining sessions over period
     skill_df.sort_values(
         by=["variable", "date"], ascending=True, inplace=True)
+    # drop all rows where level = 0 and diff = -ve
+    skill_df = skill_df.loc[~(skill_df['value'] == 0.0), :]
+
     skill_df['diffs'] = skill_df['value'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['diffs'][mask] = np.nan
@@ -76,6 +79,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
     skill_df["level"] = skill_df["level"] + 1
 
+    skill_df["variable"].ffill(inplace=True)
+
     if not virtual:
         skill_df["level"] = np.clip(
             skill_df['level'], a_max=99, a_min=None)
@@ -85,6 +90,8 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
     skill_df['l_diffs'][mask] = np.nan
     skill_df["l_diffs"] = np.where(
         (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
+
+    skill_df[skill_df["variable"] == "cooking"].to_csv("test5.csv")
 
     skill_df.dropna(inplace=True)
     skill_df["l_diffs"] = skill_df["l_diffs"].abs()
