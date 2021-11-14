@@ -49,7 +49,7 @@ def main():
 
         group = st.sidebar.selectbox('Group by:',
                                      ('session', 'day'),
-                                     index=1, format_func=format_sel)
+                                     index=0, format_func=format_sel)
         pages[page](username, virtual, group)
 
     st.sidebar.title("About")
