@@ -118,7 +118,7 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
     combined = pd.concat([skill_df, boss_df, clue_df]
                          ).sort_values(by=["date"], ascending=False)
 
-    combined["day"] = combined["date"].dt.day
+    combined["day"] = combined["date"].dt.date
 
     # https://stackoverflow.com/questions/12589481
     # /multiple-aggregations-of-the-same-column-using-pandas-groupby-agg
