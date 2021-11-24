@@ -39,7 +39,7 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
 
     df = df.reset_index().melt(id_vars=['date'])
     # UTC to gmt?
-    df["date"] = pd.to_datetime(df["date"]) + pd.DateOffset(hours=1)
+    df["date"] = pd.to_datetime(df["date"])  # + pd.DateOffset(hours=1)
 
     if subtype == "Rank":
         return df[df["variable"].str.contains("_rank")]
