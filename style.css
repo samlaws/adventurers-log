@@ -1,6 +1,12 @@
-  .red {
-    color: #e95151;
-  }
-  .green {
-    color: #38db7f;
-  }
+.st-bd {border-radius: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;}
+  
+.red {
+  color: #e95151;
+}
+.green {
+  color: #38db7f;
+}
+
