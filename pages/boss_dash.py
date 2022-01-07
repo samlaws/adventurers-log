@@ -22,7 +22,7 @@ def boss_dash(username, period):
                 player_data = api.get_player_snapshots(
                     id=msg[0], period=period)
 
-                cols = st.beta_columns((4, 1))
+                cols = st.columns((4, 1))
                 subtype = cols[1].radio(" ", ["Kills", "Rank"])
                 scale_dict = {"Rank": True, "Kills": False}
 

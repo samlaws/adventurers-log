@@ -49,6 +49,7 @@ def snapshot_to_df(snapshots, type, subtype="skill/xp"):
 
 def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group):
     skill_df = skill_df[skill_df["variable"] != "overall"]
+    skill_df.to_csv("skill_df0.csv")
     skill_df["value"] = np.where(
         skill_df["value"] == 0, skill_df["value"].shift(1), skill_df["value"])
 
@@ -68,18 +69,22 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
         by=["variable", "date"], ascending=True, inplace=True)
     # drop all rows where level = 0 and diff = -ve
     skill_df = skill_df.loc[~(skill_df['value'] == 0.0), :]
+    skill_df.to_csv("skill_df1.csv")
 
     skill_df['diffs'] = skill_df['value'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['diffs'][mask] = np.nan
     skill_df.dropna(inplace=True)
+    skill_df.to_csv("skill_df2.csv")
 
     skill_df["diffs"] = skill_df["diffs"].abs()
     bins = level_table["exp"].to_list()
     skill_df["level"] = pd.cut(skill_df.value, bins, labels=False)
     skill_df["level"] = skill_df["level"] + 1
+    skill_df.to_csv("skill_df3.csv")
 
     skill_df["variable"].ffill(inplace=True)
+    skill_df.to_csv("skill_df4.csv")
 
     if not virtual:
         skill_df["level"] = np.clip(
@@ -88,20 +93,22 @@ def timeline_data_merge(boss_df, skill_df, clue_df, level_table, virtual, group)
     skill_df['l_diffs'] = skill_df['level'].diff()
     mask = skill_df.variable != skill_df.variable.shift(1)
     skill_df['l_diffs'][mask] = np.nan
-    skill_df["l_diffs"] = np.where(
-        (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
+    # skill_df["l_diffs"] = np.where(
+    #    (skill_df["level"].notna() & skill_df["l_diffs"].isna()), skill_df["level"]-1, skill_df["l_diffs"])
 
-    skill_df[skill_df["variable"] == "cooking"].to_csv("test5.csv")
+    skill_df.to_csv("skill_df5.csv")
 
     skill_df.dropna(inplace=True)
     skill_df["l_diffs"] = skill_df["l_diffs"].abs()
     skill_df = skill_df[skill_df["l_diffs"] != 0]
     skill_df["var_type"] = "skill"
 
+    skill_df.to_csv("skill_df6.csv")
+
     skill_df.sort_values(by=["date"], ascending=False, inplace=True)
     skill_df.drop_duplicates(
         subset=["variable", "level", "l_diffs"], keep="last", inplace=True)
-
+    skill_df.to_csv("skill_df7.csv")
     clue_df = clue_df[clue_df["variable"].isin(['clue_scrolls_beginner', 'clue_scrolls_easy',
                                                 'clue_scrolls_medium', 'clue_scrolls_hard', 'clue_scrolls_elite',
                                                 'clue_scrolls_master'])]

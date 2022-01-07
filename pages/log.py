@@ -76,14 +76,14 @@ def log(username, virtual, group):
                                   == "clue_scrolls_all"]["value"].values[0]
             total_bosses = boss_l["value"].sum()
 
-            cols_head1 = st.beta_columns(3)
+            cols_head1 = st.columns(3)
             cols_head1[0].markdown(
                 f"### Total Level:\n {int(total_level):,}")
             cols_head1[1].markdown(f"### Total XP:\n {int(total_xp):,}")
             cols_head1[2].markdown(
                 f"### Overall Rank:\n {int(overall_rank):,}")
 
-            cols_head2 = st.beta_columns(3)
+            cols_head2 = st.columns(3)
             cols_head2[0].markdown(
                 f"### Total Clues:\n {int(total_clues):,}")
             cols_head2[1].markdown(
@@ -102,8 +102,8 @@ def log(username, virtual, group):
             # Hi-scores section
             st.markdown("## Hi-scores")
 
-            with st.beta_expander("Clues"):
-                cols_clues = st.beta_columns((2, 1, 2, 1))
+            with st.expander("Clues"):
+                cols_clues = st.columns((2, 1, 2, 1))
                 left, right = 0, 1
                 for index, row in clues_l.iterrows():
                     # ignore overall
@@ -124,8 +124,8 @@ def log(username, virtual, group):
                             left += 2
                             right += 2
 
-            with st.beta_expander("Skills"):
-                cols_skills = st.beta_columns((2, 1, 2, 1, 2, 1, 2, 1))
+            with st.expander("Skills"):
+                cols_skills = st.columns((2, 1, 2, 1, 2, 1, 2, 1))
                 left, right = 0, 1
                 for index, row in skill_l.iterrows():
                     if index != 0:  # ignore overall
@@ -147,8 +147,8 @@ def log(username, virtual, group):
                         left += 2
                         right += 2
 
-            with st.beta_expander("Bosses"):
-                cols_bosses = st.beta_columns((2, 1, 2, 1, 2, 1))
+            with st.expander("Bosses"):
+                cols_bosses = st.columns((2, 1, 2, 1, 2, 1))
                 left, right = 0, 1
                 for index, row in boss_l.iterrows():
                     if left == 6:  # once the last column has been reached, reset

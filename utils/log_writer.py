@@ -29,7 +29,7 @@ def log_writer(timeline_data, messages):
             short_m, long_m, val = skill_event_writer(
                 row, var, var_type, date, messages)
 
-        with st.beta_expander(short_m):
+        with st.expander(short_m):
             st.write(long_m)
             # special case for 99s
             if var_type == "skill":

@@ -35,8 +35,8 @@ def main():
     # username = st.sidebar.text_input(
     # "Enter a username", value='', max_chars=12).replace("-", " ")
 
-    username = st.sidebar.selectbox(
-        "Enter a username", ["Pompelmo", "K1LLERS0FA", "Dr VinDiesel"])
+    username = st.sidebar.text_input(
+        "Enter a username", "Pompelmo")
 
     if page in ["Skilling Dashboard",  "Bossing Dashboard"]:
         period = st.sidebar.selectbox('Tracking period:',
