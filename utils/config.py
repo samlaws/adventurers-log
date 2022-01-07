@@ -55,6 +55,7 @@ boss_dict = {
     "kreearra": "Kree'arra",
     "kril_tsutsaroth": "K'ril",
     "mimic": "Mimic",
+    "nex": "Nex",
     "nightmare": "Nightmare",
     "phosanis_nightmare": "Nightmare HM",
     "obor": "Obor",
